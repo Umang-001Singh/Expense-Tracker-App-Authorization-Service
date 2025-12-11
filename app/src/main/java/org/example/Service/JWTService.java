@@ -5,8 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.example.Entities.UserInfo;
 import org.example.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,8 @@ public class JWTService {
 
     private UserRepository userRepository;
 
-    private static final String SECRET ="Hk8xNnKk8KpQe6gNPS0f7s9X3hWwEw1kXk2zq5GmP4I=";
+    @Value("${jwt.secret}")
+    private String SECRET;
 
     public SecretKey getSignKey(){
         return Keys.hmacShaKeyFor(SECRET.getBytes());
