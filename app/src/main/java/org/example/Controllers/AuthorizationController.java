@@ -30,7 +30,7 @@ public class AuthorizationController {
             return new ResponseEntity<>("User already exists.", HttpStatus.BAD_REQUEST);
         }
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userSignupRequestDto.getUserName());
+        RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(userSignupRequestDto.getUserName());
 
         String jwtToken = jwtService.createJWTToken(userSignupRequestDto.getUserName());
 
