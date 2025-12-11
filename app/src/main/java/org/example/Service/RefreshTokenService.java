@@ -1,17 +1,15 @@
 package org.example.Service;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.example.Entities.RefreshToken;
 import org.example.Entities.UserInfo;
 import org.example.Repository.RefreshTokenRepository;
 import org.example.Repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -23,27 +21,40 @@ public class RefreshTokenService {
 
     private RefreshTokenRepository refreshTokenRepository;
 
-    public RefreshToken createRefreshToken(String username) {
+    public RefreshToken createOrUpdateRefreshToken(String username) {
         UserInfo user = userRepository.findByUserName(username);
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByUserInfo_UserId(user.getUserId());
+        RefreshToken token = null;
+        if(oldRefreshToken.isEmpty()) {
+             token = RefreshToken.builder()
+                    .token(UUID.randomUUID().toString())
+                    .expiryDate(Instant.now().plus(30 * 2, ChronoUnit.DAYS))
+                    .userInfo(user)
+                    .build();
 
-        RefreshToken token = RefreshToken.builder()
-                .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plus(30*2, ChronoUnit.DAYS))
-                .userInfo(user)
-                .build();
-
-        return refreshTokenRepository.save(token);
+             return refreshTokenRepository.save(token);
+        }
+        else if (oldRefreshToken.isPresent() && verifyExpiry(oldRefreshToken.get())){
+            token = oldRefreshToken.get();
+            token.setToken(UUID.randomUUID().toString());
+            token.setExpiryDate(Instant.now().plus(60, ChronoUnit.DAYS));
+            return refreshTokenRepository.save(token);
+        }
+        return oldRefreshToken.get();
     }
 
-    public RefreshToken verifyExpiry(RefreshToken token){
+    public boolean verifyExpiry(RefreshToken token){
         if(token.getExpiryDate().compareTo(Instant.now())<0){
-            refreshTokenRepository.delete(token);
-            throw new RuntimeException(token.getTokenId() + ": Token Expired. Please login to continue!");
+//            refreshTokenRepository.delete(token);
+            return true;
+//            throw new RuntimeException(token.getTokenId() + ": Token Expired. Please login to continue!");
         }
-        return token;
+        return false;
     }
 
     public RefreshToken findByToken(String token){
         return refreshTokenRepository.findByToken(token);
     }
+
+    public Optional<RefreshToken> findByUserId(String userId) { return refreshTokenRepository.findByUserInfo_UserId(userId); }
 }
