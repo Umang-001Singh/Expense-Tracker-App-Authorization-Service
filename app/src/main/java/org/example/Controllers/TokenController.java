@@ -1,7 +1,7 @@
 package org.example.Controllers;
 
 import lombok.AllArgsConstructor;
-import org.example.DTO.UserSignupRequestDto;
+import org.example.DTO.UserInfoRequestDto;
 import org.example.Entities.RefreshToken;
 import org.example.Entities.UserInfo;
 import org.example.Repository.UserRepository;
@@ -28,17 +28,17 @@ public class TokenController {
     private UserRepository userRepository;
 
     @PostMapping("/authorization/v1/login")
-    public ResponseEntity AuthenticateAndLogin(@RequestBody UserSignupRequestDto userSignupRequestDto){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userSignupRequestDto.getUserName(), userSignupRequestDto.getPassword()));
+    public ResponseEntity AuthenticateAndLogin(@RequestBody UserInfoRequestDto userInfoRequestDto){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userInfoRequestDto.getUserName(), userInfoRequestDto.getPassword()));
 
         if(authentication.isAuthenticated()){
-            String jwtToken = jwtService.createJWTToken(userSignupRequestDto.getUserName());
-            String userName = userSignupRequestDto.getUserName();
+            String jwtToken = jwtService.createJWTToken(userInfoRequestDto.getUserName());
+            String userName = userInfoRequestDto.getUserName();
             UserInfo user = userRepository.findByUserName(userName);
             Optional<RefreshToken> oldRefreshToken = refreshTokenService.findByUserId(user.getUserId());
 
             if(oldRefreshToken.isEmpty() || refreshTokenService.verifyExpiry(oldRefreshToken.get())){
-                RefreshToken newRefreshToken = refreshTokenService.createOrUpdateRefreshToken(userSignupRequestDto.getUserName());
+                RefreshToken newRefreshToken = refreshTokenService.createOrUpdateRefreshToken(userInfoRequestDto.getUserName());
 
                 return new ResponseEntity<>(JWTResponse
                         .builder()
