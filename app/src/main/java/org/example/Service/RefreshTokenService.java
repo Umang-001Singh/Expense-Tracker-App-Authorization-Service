@@ -28,7 +28,7 @@ public class RefreshTokenService {
         if(oldRefreshToken.isEmpty()) {
              token = RefreshToken.builder()
                     .token(UUID.randomUUID().toString())
-                    .expiryDate(Instant.now().plus(30 * 2, ChronoUnit.DAYS))
+                    .expiryDate(Instant.now().plus(60, ChronoUnit.DAYS))
                     .userInfo(user)
                     .build();
 
@@ -45,9 +45,7 @@ public class RefreshTokenService {
 
     public boolean verifyExpiry(RefreshToken token){
         if(token.getExpiryDate().compareTo(Instant.now())<0){
-//            refreshTokenRepository.delete(token);
             return true;
-//            throw new RuntimeException(token.getTokenId() + ": Token Expired. Please login to continue!");
         }
         return false;
     }

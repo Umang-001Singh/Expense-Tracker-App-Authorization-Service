@@ -3,7 +3,6 @@ package org.example.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
