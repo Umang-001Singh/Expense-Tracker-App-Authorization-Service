@@ -1,7 +1,7 @@
 package org.example.Controllers;
 
 import lombok.AllArgsConstructor;
-import org.example.DTO.UserSignupRequestDto;
+import org.example.DTO.UserInfoRequestDto;
 import org.example.Entities.RefreshToken;
 import org.example.Response.JWTResponse;
 import org.example.Service.JWTService;
@@ -24,15 +24,15 @@ public class AuthorizationController {
     private UserAuthenticationService userAuthenticationService;
 
     @PostMapping("/authorization/v1/signup")
-    public ResponseEntity signUp(@RequestBody UserSignupRequestDto userSignupRequestDto){
-        Boolean isAlreadySignedUp = userAuthenticationService.signUpUser(userSignupRequestDto);
+    public ResponseEntity signUp(@RequestBody UserInfoRequestDto userInfoRequestDto){
+        Boolean isAlreadySignedUp = userAuthenticationService.signUpUser(userInfoRequestDto);
         if(Boolean.FALSE.equals(isAlreadySignedUp)){
             return new ResponseEntity<>("User already exists.", HttpStatus.BAD_REQUEST);
         }
 
-        RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(userSignupRequestDto.getUserName());
+        RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(userInfoRequestDto.getUserName());
 
-        String jwtToken = jwtService.createJWTToken(userSignupRequestDto.getUserName());
+        String jwtToken = jwtService.createJWTToken(userInfoRequestDto.getUserName());
 
         return new ResponseEntity<>(JWTResponse
                 .builder()
