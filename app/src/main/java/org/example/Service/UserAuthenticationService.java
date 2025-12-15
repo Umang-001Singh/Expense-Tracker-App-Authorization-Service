@@ -2,10 +2,11 @@ package org.example.Service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.DTO.UserSignupRequestDto;
+import org.example.DTO.UserInfoRequestDto;
 import org.example.Entities.Role;
 import org.example.Entities.UserInfo;
 import org.example.Repository.UserRepository;
+import org.example.eventProducer.UserInfoProducer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,12 +21,16 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserAuthenticationService implements UserDetailsService {
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-    public UserInfo checkIfUserAlreadyExists(UserSignupRequestDto userInfo){
-        return userRepository.findByUserName(userInfo.getUserName());
+    private UserInfoProducer userInfoProducer;
+
+//    public static final Logger log = LoggerFactory.getLogger(UserAuthenticationService.class);
+
+    public UserInfo checkIfUserAlreadyExists(UserInfoRequestDto userInfoRequestDto){
+        return userRepository.findByUserName(userInfoRequestDto.getUserName());
     }
 
     @Override
@@ -39,16 +44,18 @@ public class UserAuthenticationService implements UserDetailsService {
         return new PrincipalUser(user);
     }
 
-    public boolean signUpUser(UserSignupRequestDto userInfo) {
-        if(Objects.nonNull(userRepository.findByUserName((userInfo.getUserName())))){
+    public boolean signUpUser(UserInfoRequestDto userInfoRequestDto) {
+        if(Objects.nonNull(userRepository.findByUserName((userInfoRequestDto.getUserName())))){
             return false;
         }
 
         String userId = UUID.randomUUID().toString();
-        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
-        userRepository.save(new UserInfo(userId, userInfo.getUserName(), userInfo.getPassword(), new HashSet<Role>()));
+        userInfoRequestDto.setPassword(passwordEncoder.encode(userInfoRequestDto.getPassword()));
+        userRepository.save(new UserInfo(userId, userInfoRequestDto.getUserName(), userInfoRequestDto.getPassword(), new HashSet<Role>()));
 
-        //
+        // Push Event to Queue
+        userInfoProducer.sendEventToKafka(userInfoRequestDto);
+
         return true;
     }
 }
