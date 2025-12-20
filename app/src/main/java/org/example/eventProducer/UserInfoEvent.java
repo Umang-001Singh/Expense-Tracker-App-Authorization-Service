@@ -1,24 +1,23 @@
-package org.example.DTO;
+package org.example.eventProducer;
 
-
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.example.Entities.UserInfo;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserInfoRequestDto extends UserInfo {
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UserInfoEvent {
     private String firstName;
-//    private String middleName;
+
     private String lastName;
-    private Long phoneNumber;
+
     private String email;
+
+    private Long phoneNumber;
+
+    private String userId;
 }

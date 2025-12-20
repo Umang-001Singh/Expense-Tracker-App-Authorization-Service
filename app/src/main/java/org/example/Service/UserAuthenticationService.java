@@ -6,6 +6,7 @@ import org.example.DTO.UserInfoRequestDto;
 import org.example.Entities.Role;
 import org.example.Entities.UserInfo;
 import org.example.Repository.UserRepository;
+import org.example.eventProducer.UserInfoEvent;
 import org.example.eventProducer.UserInfoProducer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -54,8 +55,18 @@ public class UserAuthenticationService implements UserDetailsService {
         userRepository.save(new UserInfo(userId, userInfoRequestDto.getUserName(), userInfoRequestDto.getPassword(), new HashSet<Role>()));
 
         // Push Event to Queue
-        userInfoProducer.sendEventToKafka(userInfoRequestDto);
+        userInfoProducer.sendEventToKafka(getUserInfoEventToPublish(userInfoRequestDto));
 
         return true;
+    }
+
+    public UserInfoEvent getUserInfoEventToPublish(UserInfoRequestDto userInfoRequestDto){
+        return UserInfoEvent.builder()
+                .firstName(userInfoRequestDto.getFirstName())
+                .lastName(userInfoRequestDto.getLastName())
+                .email(userInfoRequestDto.getEmail())
+                .phoneNumber(userInfoRequestDto.getPhoneNumber())
+                .userId(userInfoRequestDto.getUserId())
+                .build();
     }
 }

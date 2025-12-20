@@ -2,6 +2,8 @@ package org.example.Entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +13,7 @@ import java.util.Set;
 @Data
 @ToString(exclude = "roles")
 @Entity
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Table(name = "users")
 public class UserInfo {
     @Id
