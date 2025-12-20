@@ -20,10 +20,12 @@ public class UserInfoProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendEventToKafka(UserInfoRequestDto userInfoRequestDto){
-        Message<UserInfoRequestDto> message = MessageBuilder
-                .withPayload(userInfoRequestDto)
+    public void sendEventToKafka(UserInfoEvent userInfoEvent){
+        Message<UserInfoEvent> message = MessageBuilder
+                .withPayload(userInfoEvent)
                 .setHeader(KafkaHeaders.TOPIC, TOPIC_NAME)
                 .build();
+
+        kafkaTemplate.send(message);
     }
 }
