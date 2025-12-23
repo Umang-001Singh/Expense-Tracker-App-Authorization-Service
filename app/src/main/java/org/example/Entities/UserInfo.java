@@ -13,16 +13,17 @@ import java.util.Set;
 @Data
 @ToString(exclude = "roles")
 @Entity
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Table(name = "users")
 public class UserInfo {
     @Id
     @Column(name = "user_id")
     private String userId;
 
+    @NonNull
     @Column(name = "user_name")
     private String userName;
 
+    @NonNull
     @Column(name = "password")
     private String password;
 
