@@ -1,10 +1,7 @@
 package org.example.DTO;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.Entities.UserInfo;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
@@ -16,9 +13,15 @@ import tools.jackson.databind.annotation.JsonNaming;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserInfoRequestDto extends UserInfo {
+    @NonNull
     private String firstName;
-//    private String middleName;
+
+    @NonNull
     private String lastName;
+
+    @NonNull
     private Long phoneNumber;
+
+    @NonNull
     private String email;
 }
