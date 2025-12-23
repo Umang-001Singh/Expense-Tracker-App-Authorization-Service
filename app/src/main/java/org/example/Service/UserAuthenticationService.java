@@ -28,8 +28,6 @@ public class UserAuthenticationService implements UserDetailsService {
 
     private UserInfoProducer userInfoProducer;
 
-//    public static final Logger log = LoggerFactory.getLogger(UserAuthenticationService.class);
-
     public UserInfo checkIfUserAlreadyExists(UserInfoRequestDto userInfoRequestDto){
         return userRepository.findByUserName(userInfoRequestDto.getUserName());
     }
