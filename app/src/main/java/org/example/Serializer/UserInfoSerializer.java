@@ -5,19 +5,28 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serializer;
 import org.example.eventProducer.UserInfoEvent;
 
+import java.util.Map;
+
 @Slf4j
 public class UserInfoSerializer implements Serializer<UserInfoEvent> {
 
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public void configure(Map<String, ?> map, boolean b) {
+    }
+
     @Override
     public byte[] serialize(String s, UserInfoEvent userInfoEvent) {
-        byte[] returnValue = null;
-        ObjectMapper objectMapper = new ObjectMapper();
         try{
-            returnValue = objectMapper.writeValueAsString(userInfoEvent).getBytes();
+            return objectMapper.writeValueAsString(userInfoEvent).getBytes();
         }
         catch (Exception ex){
             log.error("Error serializing UserInfoRequestDto ", ex);
+            return null;
         }
-        return returnValue;
+    }
+
+    @Override public void close() {
     }
 }
