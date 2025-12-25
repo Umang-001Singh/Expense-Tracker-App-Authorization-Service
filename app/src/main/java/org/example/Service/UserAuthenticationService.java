@@ -51,7 +51,7 @@ public class UserAuthenticationService implements UserDetailsService {
         String userId = UUID.randomUUID().toString();
         userInfoRequestDto.setPassword(passwordEncoder.encode(userInfoRequestDto.getPassword()));
         userRepository.save(new UserInfo(userId, userInfoRequestDto.getUserName(), userInfoRequestDto.getPassword(), new HashSet<Role>()));
-
+        userInfoRequestDto.setUserId(userId);
         // Push Event to Queue
         userInfoProducer.sendEventToKafka(getUserInfoEventToPublish(userInfoRequestDto));
 
