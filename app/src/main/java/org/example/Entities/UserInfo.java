@@ -13,6 +13,7 @@ import java.util.Set;
 @Data
 @ToString(exclude = "roles")
 @Entity
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Table(name = "users")
 public class UserInfo {
     @Id
