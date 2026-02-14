@@ -43,6 +43,7 @@ public class RefreshTokenService {
     }
 
     public boolean verifyExpiry(RefreshToken token){
+//        If token has expired, return true, else return false.
         if(token.getExpiryDate().compareTo(Instant.now())<0){
             return true;
         }
