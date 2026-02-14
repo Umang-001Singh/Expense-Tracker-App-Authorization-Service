@@ -27,7 +27,7 @@ public class TokenControllerService {
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public ResponseEntity AuthenticateAndLoginService(AuthorizationRequestDto authorizationRequestDto){
+    public ResponseEntity<?> AuthenticateAndLoginService(AuthorizationRequestDto authorizationRequestDto){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authorizationRequestDto.getUserName(), authorizationRequestDto.getPassword()));
 
         if(authentication.isAuthenticated()){
